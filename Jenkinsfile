@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-              git credentialsId: "${github_creds}", url: "${github_repo}"
+              checkout([$class: 'GitSCM', branches: [[name: '*/s1']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/parameshila/project-1.git']]])
             }
         }
         stage('Build image') {
