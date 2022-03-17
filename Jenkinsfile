@@ -2,15 +2,38 @@ pipeline {
     agent any
 
     stages {
-        stage('Testing') {
+        stage('Checkout') {
             steps {
-                echo 'Building..'
-                sh 'mvn test'
+              git credentialsId: "${github_creds}", url: "${github_repo}"
             }
         }
-        stage('Sonar') {
+        stage('Build image') {
             steps {
-                echo 'Testing..'
+                sh 'docker.withRegistry('https://registry.hub.docker.com',docker_credentials')'
+                sh 'def customimage=docker.build("parameshila/project-1:latest")'
+                sh 'customimage.push'
+       }
+
+           }
+        stage('Deploy'){
+            steps {
+               sh 'docker run -d parameshila/project-1:latest'
+            }
+       }
+     
+       stage('Validate') {
+            steps {
+                sh 'mvn validate'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
             }
         }
         stage('Deploy') {
@@ -18,5 +41,7 @@ pipeline {
                 echo 'Deploying....'
             }
         }
-    }
+
+  }
+
 }
