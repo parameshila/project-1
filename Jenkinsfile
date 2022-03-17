@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Build image') {
             steps {
-                sh 'docker.withRegistry('https://registry.hub.docker.com',docker_credentials')'
+                sh 'docker.withRegistry('https://registry.hub.docker.com','docker_credentials')'
                 sh 'def customimage=docker.build("parameshila/project-1:latest")'
                 sh 'customimage.push'
        }
